@@ -1,0 +1,36 @@
+from flask import Flask, request
+
+app = Flask(__name__)
+
+@app.route("/")
+def hello():
+   return " you called \n"
+
+@app.route("/echo", methods=['POST'])
+def echo():
+   return "You said: " + request.form['text']
+
+# Factorization logic (requirement: always include 1)
+def factorize_number(n):
+    factors = [1]   # always start with 1
+    while n % 2 == 0:
+        factors.append(2)
+        n //= 2
+    p = 3
+    while p * p <= n:
+        while n % p == 0:
+            factors.append(p)
+            n //= p
+        p += 2
+    if n > 1:
+        factors.append(n)
+    return factors
+
+@app.route("/factorize", methods=['POST'])
+def factorize():
+    inINT = int(request.form['inINT'])
+    factors = factorize_number(inINT)
+    return {"factors": factors}
+
+if __name__ == "__main__":
+   app.run(host='0.0.0.0')

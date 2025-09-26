@@ -1,0 +1,35 @@
+import unittest
+from my_server import app  
+
+class TestFactorizeEndpoint(unittest.TestCase):
+
+    def setUp(self):
+        # Set up test client
+        self.app = app.test_client()
+        self.app.testing = True
+
+    def test_factorize_composite(self):
+        # Test a composite number
+        response = self.app.post("/factorize", data={"inINT": "12"})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get_json(), {"factors": [1, 2, 2, 3]})
+
+    def test_factorize_prime(self):
+        # Test a prime number
+        response = self.app.post("/factorize", data={"inINT": "7"})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get_json(), {"factors": [1, 7]})
+
+    def test_factorize_one(self):
+        # Test 1 as a special case
+        response = self.app.post("/factorize", data={"inINT": "1"})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get_json(), {"factors": [1]})
+
+    def test_factorize_invalid(self):
+        # Test invalid input (non-integer)
+        response = self.app.post("/factorize", data={"inINT": "abc"})
+        self.assertEqual(response.status_code, 500)  
+
+if __name__ == "__main__":
+    unittest.main()
